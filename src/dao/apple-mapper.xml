@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+  <!-- *******insert모음 ******* --> 
+			<!-- 회원가입추가 -->
+					
+				
+<mapper namespace="dao.apple">
+<insert id="insertMember" parameterType="member">
+	INSERT INTO MEMBER(ID,BIRTH,PW,NAME,PHONENUMBER,EMAIL,NICKNAME)
+	VALUES(#{id},#{birth},#{pw},#{name},#{phonenumber},#{email},#{nickname})
+</insert>
+
+<select id="selectRead" resultType="model.BookBean" parameterType="java.lang.String">
+SELECT BOOKCODE,BOOKNAME,CATEGORYCODE,CONTENTS,LINK
+FROM BOOK 
+WHERE BOOKCODE=#{VALUE}
+</select>
+
+<select id="selectmember" resultType="model.MemberBean">
+	SELECT * FROM MEMBER
+</select> 
+
+<select id="idcheck" resultType="model.InsertBookBean" parameterType="java.lang.String" >
+	SELECT PW FROM MEMBER
+	  WHERE ID=#{VALUE}	
+</select>
+<select id="idcheckProcess" resultType="String" parameterType="java.lang.String" >
+   SELECT PW FROM MEMBER
+   WHERE ID=#{value}   
+</select>
+
+<select id="searchBookBean" resultType="model.InsertBookBean" parameterType="java.util.HashMap">
+     SELECT 
+     BOOKCODE, BOOKNAME,AUTHORNAME,PUBLICATIONDATE,REGISTRATIONDATE,CATEGORYNAME,CONTENTS,PUBLISHERNAME
+     FROM  BOOK 
+     NATURAL JOIN CATEGORY  
+     NATURAL JOIN  AUTHOR 
+     NATURAL JOIN  PUBLISHER 
+    <choose>
+           <when test="query!=null and data!=null and categoryButton==null and query!='all'">
+              <where>${query} LIKE '%'||#{data}||'%'</where>
+           </when>
+     </choose>
+</select>
+
+<select id="selectcategory" resultType="model.CategoryBean">
+	SELECT * FROM CATEGORY
+</select>
+
+<select id="selectEval" resultType="model.EvalBookBean" parameterType="java.util.HashMap">
+   SELECT ID, BOOKNAME, EVALUATION, BOOKCODE, SCORE, WRITEDATE
+   FROM BOOK NATURAL JOIN EVALUATION
+   WHERE BOOKCODE=#{VALUE}
+</select>
+
+<insert id="insertEvaluation" parameterType="evaluation">
+INSERT INTO EVALUATION VALUES(#{id},#{bookcode},#{score},#{evaluation},SYSDATE)
+</insert>
+
+<select id="searchEval" resultType="java.util.List" parameterType="java.lang.String">
+SELECT BOOKCODE FROM EVALUATION WHERE ID=#{VALUE}
+</select>
+
+
+<!-- yun ji -->
+
+   <select id="selectBookListAdmin" resultType="book">
+      select
+      BOOKCODE,BOOKNAME,
+      AUTHORCODE, PUBLISHERCODE ,PUBLICATIONDATE,
+      REGISTRATIONDATE
+      ,CATEGORYCODE, CONTENTS ,LINK from book
+   </select>
+
+   <select id="selectAuthorAdmin" resultType="author"
+      parameterType="String">
+      select AUTHORNAME from author where AUTHORCODE =#{VALUE}
+   </select>
+
+   <select id="selectPublisherAdmin" resultType="publisher"
+      parameterType="String">
+      select PUBLISHERNAME from PUBLISHER where PUBLISHERCODE
+      =#{VALUE}
+   </select>
+   <select id="selectCategoryAdmin" resultType="category"
+      parameterType="String">
+      select CATEGORYNAME from category where CATEGORYCODE
+      =#{VALUE}
+   </select>
+
+   <select id="selectPublListAdmin" resultType="publisher">
+      select * from
+      publisher
+
+   </select>
+   <select id="selectMemberListAdmin" resultType="member">
+      select * from
+      member
+   </select>
+   <select id="selectEvalListAdmin" resultType="evaluation">
+      select * from
+      evaluation
+   </select>
+   <select id="selectBookAdmin" resultType="book"
+      parameterType="String">
+      select * from book where bookcode = #{value}
+   </select>
+   <select id="selectAuthorListAdmin" resultType="author">
+      select * from
+      author
+   </select>
+   <insert id="addPublAdmin" parameterType="publisher">
+      insert into
+      publisher(PUBLISHERCODE,PUBLISHERNAME,CALLNUMBER)
+      values(#{publishercode},#{publishername},#{callnumber})
+
+   </insert>
+   <insert id="addAuthorAdmin" parameterType="author">
+      insert into
+      author(authorcode,authorname)
+      values(#{authorcode},#{authorname})
+
+   </insert>
+   <select id="selectCateListAdmin" resultType="category">
+      select* from category
+
+   </select>
+
+
+<!-- <select id="selectBookbean" resultType="model.InsertBookBean">
+	  SELECT 
+	  B.BOOKNAME,A.AUTHORNAME,B.PUBLICATIONDATE,B.REGISTRATIONDATE,C.CATEGORYNAME,B.CONTENTS,P.PUBLISHERNAME
+	  FROM  BOOK B
+	  NATURAL JOIN CATEGORY C 
+	  NATURAL JOIN  AUTHOR A
+	  NATURAL JOIN  PUBLISHER P
+</select> -->
+
+
+<!-- 			
+<insert id="insertBook" parameterType="book">
+	INSERT INTO BOOK(BOOKCODE, AUTHORCODE, PUBLISHERCODE, PUBLICATIONDATE
+			         ,REGISTRATIONDATE, CATEGORYCODE, CONTENTS, LINK)
+	VALUES(#{각 페이지에서 가져올 컬럼에따른 인자들})
+		 REGISTRATIONDATE는 밑에 VALUES에서 SYSDATA로 찍어야함
+</insert>
+<insert id="insertPublisher" parameterType="publisher">
+	INSERT INTO PUBLISHER(PUBLISHERCODE, PUBLISHERNAME, CALLNUMBER)
+	VALUES(#{각 페이지에서 가져올 컬럼에따른 인자들})
+</insert>
+<insert id="insertCategory" parameterType="category">
+	INSERT INTO CATEGORY(CATEGORYCODE, CATEGORYNAME)
+	VALUES(#{각 페이지에서 가져올 컬럼에따른 인자들})
+</insert>
+<insert id="insertAudioBook" parameterType="audioBook">
+	INSERT INTO AUDIOBOOK(BOOKCODE, AUDIOFILE)
+	VALUES(#{각 페이지에서 가져올 컬럼에따른 인자들})
+</insert>
+<insert id="insertAuthor" parameterType="author">
+	INSERT INTO AUTHOR(AUTHORCODE, AUTHORNAME)
+	VALUES(#{각 페이지에서 가져올 컬럼에따른 인자들})
+</insert>
+<insert id="insertSubscribe" parameterType="subscribe">
+	INSERT INTO SUBSCRIBE(SUBSCRIBECODE, SUBSCRIBENAME)
+	VALUES(#{각 페이지에서 가져올 컬럼에따른 인자들})
+</insert>
+			회원계정에서 추가 
+<insert id="insertRental" parameterType="rental">
+	INSERT INTO RENTAL(BOOKCODE, ID, RENTDATE)
+	RENTDATE는 밑에 VALUES에서 SYSDATA로 찍어야함
+	VALUES(#{각 페이지에서 가져올 컬럼에따른 인자들})
+</insert>
+<insert id="insertEvaluation" parameterType="evaluation">
+	INSERT INTO EVALUATION(ID, BOOKCODE, SCORE, EVALUATION, WRITEDATE)
+	WRITEDATE는 밑에 VALUES에서 SYSDATA로 찍어야함
+	VALUES(#{각 페이지에서 가져올 컬럼에따른 인자들})
+</insert>
+<insert id="insertWishList" parameterType="wishListBean">
+	INSERT INTO WISHLIST(ID, BOOKCODE, WISHDATE)
+	WISHDATE는 밑에 VALUES에서 SYSDATA로 찍어야함
+	VALUES(#{각 페이지에서 가져올 컬럼에따른 인자들})
+</insert>
+			회원계정 결제창에서 추가
+<insert id="insertSubscribeList" parameterType="subscribeList">
+	INSERT INTO SUBSCRIBELIST(ID, SUBSCRIBECODE, PAYMENTDATE)
+	PAYMENTDATE는 밑에 VALUES에서 SYSDATA로 찍어야함
+	VALUES(#{각 페이지에서 가져올 컬럼에따른 인자들})
+</insert>
+				
+				
+				INSERT와 SYSDATE의 예시
+	<insert id="insertBBS" parameterType="bbs">
+		INSERT INTO BBS_SI(NO,WRITER,TITLE,PASSWORD,CONTENTS,
+		HIT,FILENAME,REGDATE,ID,REF,STEP,LEV,PNUM,REPLY)
+		VALUES(#{no},#{writer},#{title},
+		#{password},#{contents},0,#{filename},SYSDATE,#{id},
+		#{ref},#{step},#{lev},#{pnum},0)
+	</insert> -->
+</mapper>
