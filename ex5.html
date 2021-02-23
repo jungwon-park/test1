@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="EUC-KR">
+<title>Insert title here</title>
+</head>
+<body>
+<script type="text/javascript">
+{
+let textOne = "첫줄\n	\
+두번째	\
+세번째	\
+";
+	console.log(textOne);
+	 
+let one = 1;
+let two = 2;
+let textTwo =`${one}
+${two}
+			${one+two}`;
+	console.log(textTwo);
+}
+
+let tag = String.raw({
+	  raw: ['foo', 'bar', 'baz']},  2 + 3, 'Java' + 'Script');
+	console.log(tag);
+
+let textString = String.raw`문자열로\n 출력하기`;
+console.log(textString);
+</script>
+</body>
+</html>
